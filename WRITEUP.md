@@ -281,9 +281,9 @@ A full training run was executed using `Qwen2.5-3B-Instruct` on the **official �
 
 | Metric | First Step | Last Step | Mean | Max | Target |
 |--------|-----------|-----------|------|-----|--------|
-| Composite Reward | 0.515 | 0.508 | 0.525 | **0.771** | > 0.7 ✅ |
+| Composite Reward | 0.515 | 0.508 | 0.525 | **0.771** | > 0.7  |
 | Training Loss | ~0 | 9.3e-6 | 2.7e-5 | 1.0e-4 | — |
-| KL Divergence | ~0 | 2.3e-4 | 7.0e-4 | 1.7e-3 | < 10 nats ✅ |
+| KL Divergence | ~0 | 2.3e-4 | 7.0e-4 | 1.7e-3 | < 10 nats  |
 | Policy Entropy | 0.184 | 0.212 | 0.262 | 0.352 | — |
 | Gradient Norm | 0.122 | 0.204 | 0.143 | 0.261 | — |
 
