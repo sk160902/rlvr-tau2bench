@@ -1,0 +1,12 @@
+torch>=2.1.0
+transformers>=4.45.0
+trl>=0.12.0
+peft>=0.13.0
+accelerate>=1.0.0
+datasets>=3.0.0
+bitsandbytes>=0.44.0
+pyyaml>=6.0
+litellm>=1.0.0
+gymnasium>=0.29.0
+numpy>=1.26.0
+wandb>=0.18.0

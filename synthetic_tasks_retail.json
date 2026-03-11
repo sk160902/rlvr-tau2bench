@@ -1,0 +1,1459 @@
+[
+  {
+    "task_id": "synthetic_retail_0000",
+    "domain": "retail",
+    "task_description": "Intent: multi_issue. Complexity: complex. Policy rules tested: verify_identity, refund_window, confirm_before_action. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I have two issues: the wireless headphones from order ORD-77076 is damaged, and I also need to return the wall clock from order ORD-75950."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "ask for order ID"
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-77076"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "process_refund",
+        "args": {
+          "order_id": "ORD-77076",
+          "amount": 159.9,
+          "method": "original_payment"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "update_order_status",
+        "args": {
+          "order_id": "ORD-77076",
+          "status": "exchanged",
+          "reason": "customer request"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0001",
+    "domain": "retail",
+    "task_description": "Intent: return_damaged_item. Complexity: simple. Policy rules tested: verify_identity, refund_window. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "The wireless headphones I ordered is defective. I need to return it."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "ask for order ID"
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-23693"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "process_refund",
+        "args": {
+          "order_id": "ORD-23693",
+          "amount": 187.68,
+          "method": "original_payment"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0002",
+    "domain": "retail",
+    "task_description": "Intent: late_refund_request. Complexity: medium. Policy rules tested: refund_window. Edge case: True.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I bought this USB hub about 41 days ago and want a refund."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-72010"
+        }
+      },
+      {
+        "type": "message",
+        "content": "explain 30-day refund policy, offer store credit or exchange"
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0003",
+    "domain": "retail",
+    "task_description": "Intent: return_damaged_item. Complexity: simple. Policy rules tested: verify_identity, refund_window. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I received a broken winter jacket. I want my money back."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "ask for order ID"
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-14800"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "process_refund",
+        "args": {
+          "order_id": "ORD-14800",
+          "amount": 66.53,
+          "method": "original_payment"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0004",
+    "domain": "retail",
+    "task_description": "Intent: safety_complaint. Complexity: complex. Policy rules tested: safety_escalation. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "My child got hurt using the wool sweater. This is a safety hazard!"
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "tool_call",
+        "tool": "transfer_to_human",
+        "args": {
+          "reason": "safety_complaint",
+          "priority": "high"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0005",
+    "domain": "retail",
+    "task_description": "Intent: price_match_request. Complexity: medium. Policy rules tested: . Edge case: True.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Your competitor sells the USB hub for $24.67. I want the difference refunded."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "explain this is not covered by current policy, offer alternatives"
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0006",
+    "domain": "retail",
+    "task_description": "Intent: safety_complaint. Complexity: complex. Policy rules tested: safety_escalation. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "The desk lamp caused an allergic reaction on my skin."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "tool_call",
+        "tool": "transfer_to_human",
+        "args": {
+          "reason": "safety_complaint",
+          "priority": "high"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0007",
+    "domain": "retail",
+    "task_description": "Intent: price_match_request. Complexity: medium. Policy rules tested: . Edge case: True.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Your competitor sells the bluetooth speaker for $73.92. I want the difference refunded."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "explain this is not covered by current policy, offer alternatives"
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0008",
+    "domain": "retail",
+    "task_description": "Intent: late_refund_request. Complexity: medium. Policy rules tested: refund_window. Edge case: True.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I've had the wall clock for 48 days, can I still return it?"
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-73536"
+        }
+      },
+      {
+        "type": "message",
+        "content": "explain 30-day refund policy, offer store credit or exchange"
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0009",
+    "domain": "retail",
+    "task_description": "Intent: exchange_cross_category. Complexity: medium. Policy rules tested: same_category_exchange. Edge case: True.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Instead of the bluetooth speaker, I'd rather have a coffee maker."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-57248"
+        }
+      },
+      {
+        "type": "message",
+        "content": "explain same-category exchange policy, offer refund + new purchase"
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0010",
+    "domain": "retail",
+    "task_description": "Intent: late_refund_request. Complexity: medium. Policy rules tested: refund_window. Edge case: True.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I've had the wool sweater for 52 days, can I still return it?"
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-83565"
+        }
+      },
+      {
+        "type": "message",
+        "content": "explain 30-day refund policy, offer store credit or exchange"
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0011",
+    "domain": "retail",
+    "task_description": "Intent: return_damaged_item. Complexity: simple. Policy rules tested: verify_identity, refund_window. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I received a broken denim jeans. I want my money back."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "ask for order ID"
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-34133"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "process_refund",
+        "args": {
+          "order_id": "ORD-34133",
+          "amount": 140.79,
+          "method": "original_payment"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0012",
+    "domain": "retail",
+    "task_description": "Intent: price_match_request. Complexity: medium. Policy rules tested: . Edge case: True.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I found my throw pillow cheaper at another store. Can you match the price?"
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "explain this is not covered by current policy, offer alternatives"
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0013",
+    "domain": "retail",
+    "task_description": "Intent: late_refund_request. Complexity: medium. Policy rules tested: refund_window. Edge case: True.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I bought this wireless headphones about 59 days ago and want a refund."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-80806"
+        }
+      },
+      {
+        "type": "message",
+        "content": "explain 30-day refund policy, offer store credit or exchange"
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0014",
+    "domain": "retail",
+    "task_description": "Intent: price_match_request. Complexity: medium. Policy rules tested: . Edge case: True.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Your competitor sells the smart watch for $46.94. I want the difference refunded."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "explain this is not covered by current policy, offer alternatives"
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0015",
+    "domain": "retail",
+    "task_description": "Intent: price_match_request. Complexity: medium. Policy rules tested: . Edge case: True.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I found my desk lamp cheaper at another store. Can you match the price?"
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "explain this is not covered by current policy, offer alternatives"
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0016",
+    "domain": "retail",
+    "task_description": "Intent: return_damaged_item. Complexity: simple. Policy rules tested: verify_identity, refund_window. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I received a broken kitchen knife set. I want my money back."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "ask for order ID"
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-64576"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "process_refund",
+        "args": {
+          "order_id": "ORD-64576",
+          "amount": 136.84,
+          "method": "original_payment"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0017",
+    "domain": "retail",
+    "task_description": "Intent: price_match_request. Complexity: medium. Policy rules tested: . Edge case: True.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Your competitor sells the winter jacket for $19.26. I want the difference refunded."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "explain this is not covered by current policy, offer alternatives"
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0018",
+    "domain": "retail",
+    "task_description": "Intent: price_match_request. Complexity: medium. Policy rules tested: . Edge case: True.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I found my running shoes cheaper at another store. Can you match the price?"
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "explain this is not covered by current policy, offer alternatives"
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0019",
+    "domain": "retail",
+    "task_description": "Intent: return_damaged_item. Complexity: simple. Policy rules tested: verify_identity, refund_window. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I received a broken cotton t-shirt. I want my money back."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "ask for order ID"
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-32342"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "process_refund",
+        "args": {
+          "order_id": "ORD-32342",
+          "amount": 16.83,
+          "method": "original_payment"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0020",
+    "domain": "retail",
+    "task_description": "Intent: exchange_same_category. Complexity: simple. Policy rules tested: verify_identity, same_category_exchange. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Can I swap my USB hub for a different size?"
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "ask for order ID"
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-17726"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_product_info",
+        "args": {
+          "product_id": "USB-hub"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "update_order_status",
+        "args": {
+          "order_id": "ORD-17726",
+          "status": "exchanged",
+          "reason": "customer request"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0021",
+    "domain": "retail",
+    "task_description": "Intent: exchange_same_category. Complexity: simple. Policy rules tested: verify_identity, same_category_exchange. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Can I swap my winter jacket for a different size?"
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "ask for order ID"
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-66296"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_product_info",
+        "args": {
+          "product_id": "winter-jacket"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "update_order_status",
+        "args": {
+          "order_id": "ORD-66296",
+          "status": "exchanged",
+          "reason": "customer request"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0022",
+    "domain": "retail",
+    "task_description": "Intent: multi_issue. Complexity: complex. Policy rules tested: verify_identity, refund_window, confirm_before_action. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I have two issues: the wall clock from order ORD-87913 is damaged, and I also need to return the throw pillow from order ORD-80806."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "ask for order ID"
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-87913"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "process_refund",
+        "args": {
+          "order_id": "ORD-87913",
+          "amount": 51.4,
+          "method": "original_payment"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "update_order_status",
+        "args": {
+          "order_id": "ORD-87913",
+          "status": "exchanged",
+          "reason": "customer request"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0023",
+    "domain": "retail",
+    "task_description": "Intent: return_damaged_item. Complexity: simple. Policy rules tested: verify_identity, refund_window. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I received a broken smart watch. I want my money back."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "ask for order ID"
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-80806"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "process_refund",
+        "args": {
+          "order_id": "ORD-80806",
+          "amount": 77.31,
+          "method": "original_payment"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0024",
+    "domain": "retail",
+    "task_description": "Intent: multi_issue. Complexity: complex. Policy rules tested: verify_identity, refund_window, confirm_before_action. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I need help with multiple orders. ORD-49000 has a wrong item and ORD-16054 needs cancellation."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "ask for order ID"
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-49000"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "process_refund",
+        "args": {
+          "order_id": "ORD-49000",
+          "amount": 91.51,
+          "method": "original_payment"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "update_order_status",
+        "args": {
+          "order_id": "ORD-49000",
+          "status": "exchanged",
+          "reason": "customer request"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0025",
+    "domain": "retail",
+    "task_description": "Intent: safety_complaint. Complexity: complex. Policy rules tested: safety_escalation. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "The throw pillow started smoking when I plugged it in. This is dangerous!"
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "tool_call",
+        "tool": "transfer_to_human",
+        "args": {
+          "reason": "safety_complaint",
+          "priority": "high"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0026",
+    "domain": "retail",
+    "task_description": "Intent: exchange_cross_category. Complexity: medium. Policy rules tested: same_category_exchange. Edge case: True.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Instead of the wireless headphones, I'd rather have a kitchen knife set."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-32160"
+        }
+      },
+      {
+        "type": "message",
+        "content": "explain same-category exchange policy, offer refund + new purchase"
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0027",
+    "domain": "retail",
+    "task_description": "Intent: return_damaged_item. Complexity: simple. Policy rules tested: verify_identity, refund_window. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "The laptop charger I ordered is defective. I need to return it."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "ask for order ID"
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-75457"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "process_refund",
+        "args": {
+          "order_id": "ORD-75457",
+          "amount": 124.1,
+          "method": "original_payment"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0028",
+    "domain": "retail",
+    "task_description": "Intent: multi_issue. Complexity: complex. Policy rules tested: verify_identity, refund_window, confirm_before_action. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I need help with multiple orders. ORD-57248 has a wrong item and ORD-32160 needs cancellation."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "ask for order ID"
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-57248"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "process_refund",
+        "args": {
+          "order_id": "ORD-57248",
+          "amount": 50.44,
+          "method": "original_payment"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "update_order_status",
+        "args": {
+          "order_id": "ORD-57248",
+          "status": "exchanged",
+          "reason": "customer request"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0029",
+    "domain": "retail",
+    "task_description": "Intent: exchange_same_category. Complexity: simple. Policy rules tested: verify_identity, same_category_exchange. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Can I swap my throw pillow for a different size?"
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "ask for order ID"
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-14800"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_product_info",
+        "args": {
+          "product_id": "throw-pillow"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "update_order_status",
+        "args": {
+          "order_id": "ORD-14800",
+          "status": "exchanged",
+          "reason": "customer request"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0030",
+    "domain": "retail",
+    "task_description": "Intent: exchange_cross_category. Complexity: medium. Policy rules tested: same_category_exchange. Edge case: True.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I bought a laptop charger but actually need a denim jeans. Can I exchange?"
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-83565"
+        }
+      },
+      {
+        "type": "message",
+        "content": "explain same-category exchange policy, offer refund + new purchase"
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0031",
+    "domain": "retail",
+    "task_description": "Intent: price_match_request. Complexity: medium. Policy rules tested: . Edge case: True.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I found my wool sweater cheaper at another store. Can you match the price?"
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "explain this is not covered by current policy, offer alternatives"
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0032",
+    "domain": "retail",
+    "task_description": "Intent: multi_issue. Complexity: complex. Policy rules tested: verify_identity, refund_window, confirm_before_action. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I have two issues: the wireless headphones from order ORD-16054 is damaged, and I also need to return the bluetooth speaker from order ORD-75950."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "ask for order ID"
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-16054"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "process_refund",
+        "args": {
+          "order_id": "ORD-16054",
+          "amount": 69.02,
+          "method": "original_payment"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "update_order_status",
+        "args": {
+          "order_id": "ORD-16054",
+          "status": "exchanged",
+          "reason": "customer request"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0033",
+    "domain": "retail",
+    "task_description": "Intent: late_refund_request. Complexity: medium. Policy rules tested: refund_window. Edge case: True.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I've had the bluetooth speaker for 56 days, can I still return it?"
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-83941"
+        }
+      },
+      {
+        "type": "message",
+        "content": "explain 30-day refund policy, offer store credit or exchange"
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0034",
+    "domain": "retail",
+    "task_description": "Intent: exchange_same_category. Complexity: simple. Policy rules tested: verify_identity, same_category_exchange. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Can I swap my USB hub for a different size?"
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "ask for order ID"
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-15033"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_product_info",
+        "args": {
+          "product_id": "USB-hub"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "update_order_status",
+        "args": {
+          "order_id": "ORD-15033",
+          "status": "exchanged",
+          "reason": "customer request"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0035",
+    "domain": "retail",
+    "task_description": "Intent: price_match_request. Complexity: medium. Policy rules tested: . Edge case: True.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I found my cotton t-shirt cheaper at another store. Can you match the price?"
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "explain this is not covered by current policy, offer alternatives"
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0036",
+    "domain": "retail",
+    "task_description": "Intent: return_damaged_item. Complexity: simple. Policy rules tested: verify_identity, refund_window. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "The smart watch I ordered is defective. I need to return it."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "ask for order ID"
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-71717"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "process_refund",
+        "args": {
+          "order_id": "ORD-71717",
+          "amount": 170.29,
+          "method": "original_payment"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0037",
+    "domain": "retail",
+    "task_description": "Intent: return_damaged_item. Complexity: simple. Policy rules tested: verify_identity, refund_window. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "My wall clock arrived damaged. Can I get a refund?"
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "ask for order ID"
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-63497"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "process_refund",
+        "args": {
+          "order_id": "ORD-63497",
+          "amount": 105.69,
+          "method": "original_payment"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0038",
+    "domain": "retail",
+    "task_description": "Intent: multi_issue. Complexity: complex. Policy rules tested: verify_identity, refund_window, confirm_before_action. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I have two issues: the laptop charger from order ORD-55357 is damaged, and I also need to return the denim jeans from order ORD-87304."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "ask for order ID"
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-55357"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "process_refund",
+        "args": {
+          "order_id": "ORD-55357",
+          "amount": 149.59,
+          "method": "original_payment"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "update_order_status",
+        "args": {
+          "order_id": "ORD-55357",
+          "status": "exchanged",
+          "reason": "customer request"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0039",
+    "domain": "retail",
+    "task_description": "Intent: multi_issue. Complexity: complex. Policy rules tested: verify_identity, refund_window, confirm_before_action. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I need help with multiple orders. ORD-15663 has a wrong item and ORD-40704 needs cancellation."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "ask for order ID"
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-15663"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "process_refund",
+        "args": {
+          "order_id": "ORD-15663",
+          "amount": 72.5,
+          "method": "original_payment"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "update_order_status",
+        "args": {
+          "order_id": "ORD-15663",
+          "status": "exchanged",
+          "reason": "customer request"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0040",
+    "domain": "retail",
+    "task_description": "Intent: late_refund_request. Complexity: medium. Policy rules tested: refund_window. Edge case: True.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I've had the desk lamp for 52 days, can I still return it?"
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-40704"
+        }
+      },
+      {
+        "type": "message",
+        "content": "explain 30-day refund policy, offer store credit or exchange"
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0041",
+    "domain": "retail",
+    "task_description": "Intent: multi_issue. Complexity: complex. Policy rules tested: verify_identity, refund_window, confirm_before_action. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I have two issues: the running shoes from order ORD-39293 is damaged, and I also need to return the denim jeans from order ORD-14800."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "ask for order ID"
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-39293"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "process_refund",
+        "args": {
+          "order_id": "ORD-39293",
+          "amount": 25.44,
+          "method": "original_payment"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "update_order_status",
+        "args": {
+          "order_id": "ORD-39293",
+          "status": "exchanged",
+          "reason": "customer request"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0042",
+    "domain": "retail",
+    "task_description": "Intent: multi_issue. Complexity: complex. Policy rules tested: verify_identity, refund_window, confirm_before_action. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I have two issues: the desk lamp from order ORD-73536 is damaged, and I also need to return the running shoes from order ORD-54728."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "ask for order ID"
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-73536"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "process_refund",
+        "args": {
+          "order_id": "ORD-73536",
+          "amount": 37.38,
+          "method": "original_payment"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "update_order_status",
+        "args": {
+          "order_id": "ORD-73536",
+          "status": "exchanged",
+          "reason": "customer request"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0043",
+    "domain": "retail",
+    "task_description": "Intent: exchange_same_category. Complexity: simple. Policy rules tested: verify_identity, same_category_exchange. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Can I swap my kitchen knife set for a different size?"
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "ask for order ID"
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-57248"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_product_info",
+        "args": {
+          "product_id": "kitchen-knife-set"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "update_order_status",
+        "args": {
+          "order_id": "ORD-57248",
+          "status": "exchanged",
+          "reason": "customer request"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0044",
+    "domain": "retail",
+    "task_description": "Intent: price_match_request. Complexity: medium. Policy rules tested: . Edge case: True.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Your competitor sells the kitchen knife set for $43.23. I want the difference refunded."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "explain this is not covered by current policy, offer alternatives"
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0045",
+    "domain": "retail",
+    "task_description": "Intent: price_match_request. Complexity: medium. Policy rules tested: . Edge case: True.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Your competitor sells the wall clock for $26.41. I want the difference refunded."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "explain this is not covered by current policy, offer alternatives"
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0046",
+    "domain": "retail",
+    "task_description": "Intent: return_damaged_item. Complexity: simple. Policy rules tested: verify_identity, refund_window. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "My bluetooth speaker arrived damaged. Can I get a refund?"
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "ask for order ID"
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-87304"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "process_refund",
+        "args": {
+          "order_id": "ORD-87304",
+          "amount": 165.01,
+          "method": "original_payment"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0047",
+    "domain": "retail",
+    "task_description": "Intent: late_refund_request. Complexity: medium. Policy rules tested: refund_window. Edge case: True.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I've had the bluetooth speaker for 43 days, can I still return it?"
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-75950"
+        }
+      },
+      {
+        "type": "message",
+        "content": "explain 30-day refund policy, offer store credit or exchange"
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0048",
+    "domain": "retail",
+    "task_description": "Intent: price_match_request. Complexity: medium. Policy rules tested: . Edge case: True.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "Your competitor sells the wool sweater for $12.03. I want the difference refunded."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "explain this is not covered by current policy, offer alternatives"
+      }
+    ]
+  },
+  {
+    "task_id": "synthetic_retail_0049",
+    "domain": "retail",
+    "task_description": "Intent: multi_issue. Complexity: complex. Policy rules tested: verify_identity, refund_window, confirm_before_action. Edge case: False.",
+    "conversation": [
+      {
+        "role": "user",
+        "content": "I have two issues: the USB hub from order ORD-55357 is damaged, and I also need to return the wall clock from order ORD-23693."
+      }
+    ],
+    "ground_truth_actions": [
+      {
+        "type": "message",
+        "content": "ask for order ID"
+      },
+      {
+        "type": "tool_call",
+        "tool": "get_order_details",
+        "args": {
+          "order_id": "ORD-55357"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "process_refund",
+        "args": {
+          "order_id": "ORD-55357",
+          "amount": 16.43,
+          "method": "original_payment"
+        }
+      },
+      {
+        "type": "tool_call",
+        "tool": "update_order_status",
+        "args": {
+          "order_id": "ORD-55357",
+          "status": "exchanged",
+          "reason": "customer request"
+        }
+      }
+    ]
+  }
+]
