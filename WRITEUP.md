@@ -8,7 +8,7 @@
 
 **Why TRL:**
 
-- **Native GRPO support.** TRL's `GRPOTrainer` implements Group Relative Policy Optimization, the algorithm behind DeepSeek-R1's reasoning improvements. GRPO is purpose-built for RLVR: it generates K completions per prompt, scores them with verifiable rewards, and updates the policy using group-relative advantages. This eliminates the need for a separate critic network.
+- **Native GRPO support.** TRL's `GRPOTrainer` implements Group Relative Policy Optimization, the algorithm behind DeepSeek-R1's reasoning improvements. GRPO is purpose-built for RLVR: it generates K completions per prompt, scores them with verifiable rewards, and updates the policy using group-relative advantages. This eliminates the need for a separate critic network
 - **Mature ecosystem.** TRL integrates with HuggingFace Transformers, PEFT (LoRA/QLoRA), Accelerate (multi-GPU), and Datasets. This means we can go from a pretrained model on the Hub to RLVR training in ~50 lines of config.
 - **Active maintenance.** TRL is the most actively maintained open-source RLHF/RLVR library (25k+ GitHub stars, weekly releases). Alternatives like OpenRLHF or veRL are strong but have smaller communities and less documentation.
 - **Production-proven.** TRL's PPO and GRPO trainers are used by Hugging Face, Nous Research, and others for real model training runs.
