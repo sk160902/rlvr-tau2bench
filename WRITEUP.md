@@ -1,8 +1,5 @@
 # RLVR Environment for τ²-bench: Design & Training Plan
 
-**Author:** Shreyas Krishnan
-**Task:** AfterQuery AI/ML Research Internship Take-Home
-
 ---
 
 ## 1. Framework Selection: TRL (Transformer Reinforcement Learning)
