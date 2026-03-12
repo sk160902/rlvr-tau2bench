@@ -8,7 +8,7 @@
 
 **Why TRL:**
 
-- **Native GRPO support.** TRL's `GRPOTrainer` implements Group Relative Policy Optimization, the algorithm behind DeepSeek-R1's reasoning improvements. GRPO is purpose-built for RLVR: it generates K completions per prompt, scores them with verifiable rewards, and updates the policy using group-relative advantages — no separate critic network needed.
+- **Native GRPO support.** TRL's `GRPOTrainer` implements Group Relative Policy Optimization, the algorithm behind DeepSeek-R1's reasoning improvements. GRPO is purpose-built for RLVR: it generates K completions per prompt, scores them with verifiable rewards, and updates the policy using group-relative advantages. This eliminates the need for a separate critic network.
 - **Mature ecosystem.** TRL integrates with HuggingFace Transformers, PEFT (LoRA/QLoRA), Accelerate (multi-GPU), and Datasets. This means we can go from a pretrained model on the Hub to RLVR training in ~50 lines of config.
 - **Active maintenance.** TRL is the most actively maintained open-source RLHF/RLVR library (25k+ GitHub stars, weekly releases). Alternatives like OpenRLHF or veRL are strong but have smaller communities and less documentation.
 - **Production-proven.** TRL's PPO and GRPO trainers are used by Hugging Face, Nous Research, and others for real model training runs.
@@ -29,13 +29,13 @@
 **Why τ²-bench:**
 
 - **Built-in Gymnasium interface.** τ²-bench provides `AgentGymEnv` and `UserGymEnv` classes that expose the benchmark as a standard RL environment with `reset()` / `step()` / `reward`. This maps directly to what RLVR needs.
-- **Verifiable rewards.** Each task has a clear pass/fail criterion (did the agent resolve the customer's issue correctly?), which is exactly what RLVR requires — no learned reward model needed.
+- **Verifiable rewards.** Each task has a clear pass/fail criterion (did the agent resolve the customer's issue correctly?), which is exactly what RLVR requires. No learned reward model is needed.
 - **Train/test splits.** τ²-bench provides dedicated training tasks, allowing us to train without contaminating evaluation data.
-- **Realistic task complexity.** The benchmark tests multi-turn conversation, tool use, policy compliance, and coordination — all skills that benefit from RL fine-tuning.
+- **Realistic task complexity.** The benchmark tests multi-turn conversation, tool use, policy compliance, and coordination. These are all skills that benefit from RL fine-tuning.
 - **Multiple domains.** Retail, airline, and telecom domains provide diversity for robust training and evaluation.
 
 **Why not Terminal-Bench 2.0:**
-Terminal-Bench 2.0 evaluates agents in containerized environments (protein assembly, cryptanalysis, debugging). While impressive, these tasks require executing arbitrary code in Docker containers with long rollout times (minutes per episode). This makes the RL training loop prohibitively slow — GRPO needs thousands of (prompt, completion, reward) tuples, and each rollout in TB2 is orders of magnitude more expensive than a τ²-bench conversation. τ²-bench's lightweight text-based episodes are far more practical for RLVR training.
+Terminal-Bench 2.0 evaluates agents in containerized environments (protein assembly, cryptanalysis, debugging). While impressive, these tasks require executing arbitrary code in Docker containers with long rollout times (minutes per episode). This makes the RL training loop prohibitively slow. GRPO needs thousands of (prompt, completion, reward) tuples, and each rollout in TB2 is orders of magnitude more expensive than a τ²-bench conversation. τ²-bench's lightweight text-based episodes are far more practical for RLVR training.
 
 ---
 
@@ -85,7 +85,7 @@ action ∈ V^M, where M ≤ 1024 tokens
 
 We implement **four** verifiable reward functions (exceeding the minimum of 2):
 
-#### Reward 1: Task Completion (weight: 1.0) — Primary
+#### Reward 1: Task Completion (weight: 1.0, Primary)
 
 Measures whether the agent took the correct actions to resolve the customer's issue.
 
@@ -94,13 +94,13 @@ R_task(completion, ground_truth) = (1/N) * Σ match(action_i, completion)
 ```
 
 Where `match()` gives:
-- **1.0** — Correct tool called with correct arguments
-- **0.75** — Correct tool called, partially correct arguments
-- **0.5** — Correct tool called, wrong arguments
-- **0.25** — Tool name mentioned but not properly called
-- **Keyword overlap score** — For expected message actions
+- **1.0** if the correct tool is called with correct arguments
+- **0.75** if the correct tool is called with partially correct arguments
+- **0.5** if the correct tool is called with wrong arguments
+- **0.25** if the tool name is mentioned but not properly called
+- **Keyword overlap score** for expected message actions
 
-**Why verifiable:** Ground-truth actions are defined per task. We parse the completion for tool calls and compare structurally — no learned model needed.
+**Why verifiable:** Ground-truth actions are defined per task. We parse the completion for tool calls and compare structurally. No learned model is needed.
 
 #### Reward 2: Policy Compliance (weight: 0.5)
 
@@ -248,7 +248,7 @@ The environment architecture supports both benchmarks:
 
 Key scaling principles:
 - **Smaller models** need more LoRA capacity (higher rank) and more training steps to learn tool-use patterns
-- **Larger models** already have strong tool-use priors, so RL is more about refinement — lower rank, fewer steps, but larger K for exploration
+- **Larger models** already have strong tool-use priors, so RL is more about refinement. This means using a lower rank, fewer steps, but larger K for exploration.
 - **KL penalty (β)** should increase with model size to prevent larger models from diverging too far from their strong base policy
 
 ---
@@ -279,12 +279,12 @@ A full training run was executed using `Qwen2.5-3B-Instruct` on the **official �
 | Metric | First Step | Last Step | Mean | Max | Target |
 |--------|-----------|-----------|------|-----|--------|
 | Composite Reward | 0.515 | 0.508 | 0.525 | **0.771** | > 0.7  |
-| Training Loss | ~0 | 9.3e-6 | 2.7e-5 | 1.0e-4 | — |
+| Training Loss | ~0 | 9.3e-6 | 2.7e-5 | 1.0e-4 | N/A |
 | KL Divergence | ~0 | 2.3e-4 | 7.0e-4 | 1.7e-3 | < 10 nats  |
-| Policy Entropy | 0.184 | 0.212 | 0.262 | 0.352 | — |
-| Gradient Norm | 0.122 | 0.204 | 0.143 | 0.261 | — |
+| Policy Entropy | 0.184 | 0.212 | 0.262 | 0.352 | N/A |
+| Gradient Norm | 0.122 | 0.204 | 0.143 | 0.261 | N/A |
 
-**Key result:** the composite reward reached **0.771** (step 35), crossing the ≥ 0.7 target. This was made possible by aligning the prompt tool schemas with the real τ²-bench retail tool set — the previous simplified tools caused `R_task` to score structurally near 0.25 regardless of model behaviour.
+**Key result:** the composite reward reached **0.771** (step 35), crossing the ≥ 0.7 target. This was made possible by aligning the prompt tool schemas with the real τ²-bench retail tool set. The previous simplified tools caused `R_task` to score structurally near 0.25 regardless of model behaviour.
 
 **KL divergence** stays well below the 10-nats stability threshold throughout (max 0.0017), confirming the policy does not collapse away from the base model.
 
@@ -292,7 +292,7 @@ A full training run was executed using `Qwen2.5-3B-Instruct` on the **official �
 
 ![Training Dashboard](figures_v2/training_curves_dashboard.png)
 
-*Figure 1: Six-panel training dashboard — composite reward, loss, KL divergence, policy entropy, gradient norm, and learning rate schedule over 37 GRPO steps (corrected run with real τ²-bench tools).*
+*Figure 1: Six-panel training dashboard showing composite reward, loss, KL divergence, policy entropy, gradient norm, and learning rate schedule over 37 GRPO steps (corrected run with real τ²-bench tools).*
 
 ![Reward Curve](figures_v2/reward_curve.png)
 
@@ -300,11 +300,11 @@ A full training run was executed using `Qwen2.5-3B-Instruct` on the **official �
 
 ### Interpretation
 
-- **Peak reward 0.771 crosses the ≥ 0.7 target** — achieved by using the real 15 τ²-bench tools in the prompt so that `R_task` can score correctly.
-- **Smoothed curve stays near 0.52 mean** — expected for a 1-epoch CPU run with K=2 and LoRA r=16; the full GPU config (3 epochs, K=4, r=64) would consolidate this further.
-- **Loss scale is very small** — consistent with LoRA fine-tuning where only adapter parameters are updated.
-- **KL divergence well-controlled** — the β=0.04 KL penalty is working as intended; the policy stays close to the base model.
-- **No reward hacking detected** — reward variance remains stable; no sudden spikes followed by collapse.
+- **Peak reward 0.771 crosses the ≥ 0.7 target.** This was achieved by using the real 15 τ²-bench tools in the prompt so that `R_task` can score correctly.
+- **Smoothed curve stays near 0.52 mean.** This is expected for a 1-epoch CPU run with K=2 and LoRA r=16. The full GPU config (3 epochs, K=4, r=64) would consolidate this further.
+- **Loss scale is very small.** This is consistent with LoRA fine-tuning where only adapter parameters are updated.
+- **KL divergence is well-controlled.** The β=0.04 KL penalty is working as intended, and the policy stays close to the base model.
+- **No reward hacking detected.** Reward variance remains stable throughout training, with no sudden spikes followed by collapse.
 
 ---
 
@@ -342,7 +342,7 @@ afterquery-rlvr/
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
-# Dry run (builds dataset, shows sample prompts — no GPU needed)
+# Dry run (builds dataset, shows sample prompts, no GPU needed)
 python -m src.training --dry-run
 
 # Generate synthetic tasks
