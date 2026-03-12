@@ -1,15 +1,28 @@
 """
-Demo: RLVR Environment & Reward Function Evaluation
+End-to-end demonstration of the RLVR environment and reward functions.
 
-Runs the full pipeline end-to-end:
-  1. Builds environments for all 3 τ²-bench domains
-  2. Generates prompts from each domain
-  3. Scores realistic agent responses (good / mediocre / bad) with all 4 reward functions
-  4. Generates synthetic tasks
-  5. Produces summary statistics
+This script serves as a self-contained smoke test and demonstration of the entire pipeline
+without requiring a model or a training run. Its purpose is to show that all the components
+of the project work together correctly: the environment loads tasks and constructs prompts,
+the reward functions score completions correctly, and the overall system is ready for training.
 
-This demonstrates that the reward functions provide a clear training signal
-for GRPO — good responses score high, bad responses score low.
+The demo works by constructing Tau2BenchRLVREnvironment instances for all three τ²-bench
+domains (retail, airline, and telecom), generating example prompts from each, and then
+scoring three hand-crafted agent responses against the reward functions. The three responses
+represent a good agent (one that calls the correct tool with the correct arguments and follows
+policy), a mediocre agent (one that calls the right tool but with incomplete arguments), and
+a bad agent (one that responds with irrelevant text and ignores the customer's request).
+
+The expected output is that the good agent scores near 1.0 on composite reward, the mediocre
+agent scores in the 0.4 to 0.6 range, and the bad agent scores near 0.0 to 0.2. If this
+ordering holds, it confirms that the reward functions provide a meaningful and correctly
+ranked training signal for GRPO. If the reward functions cannot distinguish good responses
+from bad ones, no amount of GRPO training will improve the model, so this sanity check is
+an important first step before committing to a multi-hour training run.
+
+The demo also calls the synthetic task generator to confirm that it produces well-formed
+tasks, and prints summary statistics showing the mean and range of reward scores across
+the test responses.
 """
 
 from src.environment import Tau2BenchRLVREnvironment

@@ -1,8 +1,34 @@
 """
-Generate training curve figures from a TRL GRPO training log.
+Training curve visualisation script for TRL GRPO training logs.
+
+This module reads the raw log file produced by a TRL GRPOTrainer run and converts it into
+matplotlib figures that make it easy to visually inspect how training progressed. Without
+this script, the training log is a long stream of JSON-like dictionaries printed to stdout,
+one per training step, which is not human-readable at a glance.
+
+The script parses each logged training step to extract six metrics: the composite reward
+(the primary metric, measuring how well the model is resolving customer service tasks),
+the training loss (how much the LoRA adapter parameters are changing per step), the KL
+divergence between the current policy and the base model (a stability indicator: if this
+grows too large the policy has drifted too far from its starting point), the policy entropy
+(how diverse the model's outputs are: low entropy means the model is becoming repetitive),
+the gradient norm (a measure of how large the parameter updates are, with spikes indicating
+instability), and the learning rate (which follows a cosine decay schedule over training).
+
+Two output figures are produced. The first is a six-panel dashboard that plots all six
+metrics side by side, with a faint raw-value line and a bolder smoothed line (5-step moving
+average) for each metric. This gives a comprehensive overview of the entire training run in
+a single image. The second is a standalone reward curve plot that shows the composite reward
+over time with a red dashed line marking the 0.7 target threshold, making it immediately
+clear whether and when the training run crossed the performance target.
+
+The --subtitle flag allows specifying the configuration details shown in the dashboard title
+(for example, "3 epochs · lr=5e-6 · K=2 · LoRA r=32") so that figures from different runs
+are self-documenting.
 
 Usage:
-    python -m src.plot_training --log training_3b_run.log --out figures/
+    python -m src.plot_training --log training_3b_v2.log --out figures_v2 --subtitle "1 epoch · lr=5e-6 · K=2 · LoRA r=16"
+    python -m src.plot_training --log training_3b_v3.log --out figures_v3 --subtitle "3 epochs · lr=5e-6 · K=2 · LoRA r=32"
 """
 
 import argparse

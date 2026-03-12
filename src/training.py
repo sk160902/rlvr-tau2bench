@@ -1,19 +1,40 @@
 """
 RLVR Training Script using TRL's GRPOTrainer.
 
-This script trains an LLM to improve performance on τ²-bench customer service
-tasks using Group Relative Policy Optimization (GRPO) with verifiable rewards.
+This script is the entry point for running a full training run. It ties together every other
+component in the project: it reads a YAML configuration file that specifies the model, LoRA
+setup, GRPO hyperparameters, and reward weights; it uses Tau2BenchRLVREnvironment to build
+the training dataset from τ²-bench tasks; it loads the language model with LoRA adapters
+applied via the PEFT library; and it hands everything to TRL's GRPOTrainer to run the actual
+reinforcement learning loop.
 
-GRPO (from DeepSeek-R1) eliminates the need for a separate critic network.
-Instead, it:
-    1. Generates K completions per prompt from the current policy
-    2. Scores each completion with verifiable reward functions
-    3. Uses the group-relative advantage (reward - mean_group_reward) to
-       update the policy, encouraging high-reward completions
+The algorithm being used is Group Relative Policy Optimization (GRPO), which was introduced
+by the DeepSeek team as part of DeepSeek-R1. GRPO was chosen specifically because it does
+not require a separate critic (value) network, which is what makes PPO expensive. Instead,
+GRPO generates K completions for the same prompt, scores each one with the reward function,
+and computes each completion's advantage as its reward minus the mean reward of the group.
+This group-relative baseline reduces gradient variance without requiring any learned baseline
+model. In this project K is set to 2 in the CPU configuration, meaning the model generates
+two candidate responses for each training prompt and learns to prefer whichever one the
+reward function scores higher.
+
+LoRA (Low-Rank Adaptation) is used to make training feasible without a GPU. Rather than
+updating all 3 billion parameters of Qwen2.5-3B-Instruct, LoRA inserts small trainable
+adapter matrices into the query, key, value, and output projection layers of the attention
+blocks. The number of trainable parameters is reduced from billions to a few million,
+which means gradients and optimizer states fit comfortably in CPU memory. Two LoRA
+configurations were used across the training runs: r=16 (alpha=32) for Run 1 and r=32
+(alpha=64) for Run 2. A higher rank gives the adapter more expressive capacity at the
+cost of slightly more memory and compute.
+
+The script also supports a --dry-run flag that builds the dataset and prints sample prompts
+without loading the model or starting training. This is useful for verifying that the
+environment, tool schemas, and prompts are correctly constructed before committing to a
+multi-hour training run.
 
 Usage:
-    python -m src.training --config configs/training_config.yaml
-    python -m src.training --domain retail --model Qwen/Qwen2.5-3B-Instruct
+    python -m src.training --config configs/training_config_3b_cpu.yaml
+    python -m src.training --dry-run
 """
 
 import argparse

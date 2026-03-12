@@ -1,16 +1,47 @@
 """
 Reward functions for RLVR training on τ²-bench.
 
-This module implements multiple verifiable reward functions that together
-incentivize the model to become a better customer service agent. The key
-principle of RLVR is that rewards must be *verifiable* — computable
-programmatically without a learned reward model.
+This module is responsible for scoring model completions during GRPO training. It implements
+four verifiable reward functions that together measure how well the model is performing as
+a retail customer service agent. The word "verifiable" is important: every reward in this
+module is computed by deterministic rules applied to the model's text output, with no
+learned reward model involved. This means the reward signal is fully transparent,
+reproducible, and cannot hallucinate.
 
-Reward Functions:
-    1. Task Completion Reward  — Did the agent take the correct actions?
-    2. Policy Compliance Reward — Did the agent follow domain rules?
-    3. Efficiency Reward        — Did the agent solve it in few turns?
-    4. Format Compliance Reward — Are tool calls properly structured?
+The four reward functions are as follows.
+
+The task completion reward (weight 1.0) is the primary signal. It compares the tool calls
+found in the model's completion against the ground-truth actions defined for each task.
+The comparison is structural: the reward function parses the completion for JSON tool call
+patterns, extracts the tool name and arguments, and scores them on a graduated scale.
+A correct tool with correct arguments scores 1.0. A correct tool with partially correct
+arguments scores 0.75. A correct tool with wrong arguments scores 0.5. A tool name that
+appears in the text but is not properly formatted as a call scores 0.25. This graduated
+scoring produces denser training gradients than a binary pass/fail approach, because the
+model receives partial credit for being on the right track rather than zero credit for any
+imperfect completion.
+
+The policy compliance reward (weight 0.5) checks whether the model's response respects the
+company policy rules embedded in the system prompt. For the retail domain these rules include
+verifying the customer's identity before making account changes, asking for confirmation
+before executing irreversible actions, and escalating appropriately when the request falls
+outside the agent's capabilities. The score is the fraction of applicable policy rules that
+the completion satisfies.
+
+The efficiency reward (weight 0.2) measures conciseness. It computes the ratio of the minimum
+number of tool calls needed (as defined by the ground truth) to the actual number of tool calls
+in the completion, capped at 1.0. A model that resolves an issue in one correct tool call scores
+higher than one that calls three tools unnecessarily.
+
+The format compliance reward (weight 0.3) checks structural correctness of the model's output:
+whether tool calls are valid JSON, whether required argument fields are present, and whether the
+response is parseable by a downstream system. This reward exists because a tool call that is
+logically correct but syntactically malformed would fail in a real deployment.
+
+All four rewards are combined in the compute_composite_reward function as a weighted average
+normalised by the total weight sum (2.0), so a perfect response across all four dimensions
+yields a composite score of 1.0. This is the function that TRL's GRPOTrainer calls during
+training to score each generated completion.
 """
 
 import json

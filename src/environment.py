@@ -1,15 +1,38 @@
 """
-RLVR Environment wrapping τ²-bench for training LLMs with verifiable rewards.
+RLVR Environment wrapping τ²-bench for training language models with verifiable rewards.
 
-This module adapts τ²-bench's Gymnasium interface into a format suitable for
-GRPO-based RLVR training via TRL. The key insight is that in RLVR, we don't
-need a step-by-step Gym loop — instead, we need to:
-  1. Generate prompts (conversation contexts) from the benchmark
-  2. Let the policy model generate complete responses
-  3. Score those responses with verifiable reward functions
+This module is the central piece of the training pipeline. Its primary responsibility is
+taking raw τ²-bench tasks and converting them into the (prompt, completion, reward) format
+that TRL's GRPOTrainer expects. Understanding why this conversion is necessary requires
+understanding the difference between a standard Gymnasium RL loop and an RLVR training loop.
 
-The environment handles multi-turn conversations by running full episodes
-and collecting (prompt, completion, reward) tuples for GRPO training.
+In a standard Gymnasium loop, an agent interacts with an environment step by step: it observes
+a state, takes an action, receives a reward, and observes the next state. This works well for
+games and simulations but is too slow for training large language models, because each step
+requires a separate model inference call.
+
+In RLVR, the loop is collapsed into a single step: the model receives a full prompt containing
+all the context it needs (the system policy, the available tools, and the customer's opening
+message), generates a complete response in one shot, and that response is immediately scored
+by deterministic reward functions. This means we need prompts, not step-by-step environments.
+
+The Tau2BenchRLVREnvironment class handles three main concerns. First, it loads tasks from the
+official τ²-bench train split using the tau2 Python API, converting each task's user scenario
+and ground-truth actions into Episode objects that are ready to be formatted as prompts.
+Second, it constructs the system prompt for the retail domain, which includes the real τ²-bench
+retail policy (covering identity verification, confirmation requirements, and escalation rules)
+and the full schemas of all 15 available retail tools. Including the complete tool schemas is
+critical because the model can only generate correctly formatted tool calls if it knows what
+parameters each tool expects. Third, it exposes a build_dataset() method that converts all
+loaded episodes into a HuggingFace Dataset object, which is the format that GRPOTrainer
+consumes during training.
+
+The module also supports augmenting the real τ²-bench tasks with synthetic tasks loaded from
+a JSON file. Synthetic tasks are programmatically generated customer service scenarios that
+follow the same format as real tasks but with randomised customer names, order IDs, and issue
+types. This augmentation increases the diversity of training prompts and reduces the risk of
+the model memorising specific details from the 74 real training tasks rather than learning
+generalizable tool-use patterns.
 """
 
 import json

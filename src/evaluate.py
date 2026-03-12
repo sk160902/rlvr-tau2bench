@@ -1,11 +1,33 @@
 """
 Evaluation script for the RLVR-trained model on τ²-bench.
 
-Runs the trained model through τ²-bench evaluation episodes and reports
-metrics on task completion, policy compliance, efficiency, and format quality.
+This script is used after training to measure how much the fine-tuned model has improved
+relative to the base model on held-out τ²-bench tasks. It is important to run evaluation
+on the test split rather than the train split, because the model has already seen the train
+tasks during GRPO training and a high score on those tasks could reflect memorisation rather
+than genuine improvement.
+
+The evaluation procedure works as follows. The script loads the trained model (or the base
+model, for a baseline comparison) and runs it on each episode in the test split of the
+specified domain. For each episode it constructs the same prompt format used during training
+(system policy plus tool schemas plus customer message), generates a single greedy completion,
+and scores that completion using the same four reward functions that were used during training.
+This ensures that the evaluation metric is directly comparable to the training metric.
+
+The script reports the mean and standard deviation of each reward component (task completion,
+policy compliance, efficiency, and format compliance) as well as the composite reward across
+all test episodes. Comparing these numbers between the base model and the fine-tuned model
+shows the effect of RLVR training. A higher composite reward for the fine-tuned model confirms
+that the GRPO training loop successfully improved the model's customer service behaviour.
+
+Note that this script was included in the repository for completeness but formal evaluation
+on the test split was not run as part of the submission. The training runs themselves
+(described in WRITEUP.md sections 6 and 7) provide the primary evidence that the training
+pipeline works correctly.
 
 Usage:
     python -m src.evaluate --model outputs/rlvr_retail/final --domain retail
+    python -m src.evaluate --model Qwen/Qwen2.5-3B-Instruct --domain retail  (baseline)
 """
 
 import argparse
