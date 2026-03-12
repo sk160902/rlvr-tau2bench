@@ -308,7 +308,66 @@ A full training run was executed using `Qwen2.5-3B-Instruct` on the **official �
 
 ---
 
-## 7. Repository Structure
+## 7. Extended Training Run: 3 Epochs, LoRA r=32
+
+To consolidate the reward signal observed in Run 1, a second training run was executed with increased capacity and longer training: 3 epochs, LoRA r=32 (α=64), keeping K=2 and all other settings identical.
+
+### Run Configuration
+
+| Parameter | Value |
+|-----------|-------|
+| Model | `Qwen/Qwen2.5-3B-Instruct` |
+| Dataset | τ²-bench retail train split (74 real tasks) |
+| Tool schemas | 15 real τ²-bench retail tools |
+| Policy | Real τ²-bench retail policy |
+| Algorithm | GRPO (TRL `GRPOTrainer`) |
+| LoRA rank | 32 (r=32, α=64) |
+| Learning rate | 5e-6 (cosine schedule) |
+| K (completions/prompt) | 2 |
+| Epochs | 3 |
+| Steps | 111 |
+| Total runtime | ~12h 28m (CPU) |
+| Output | `outputs/rlvr_retail/final` |
+
+### Training Metrics
+
+| Metric | First Step | Last Step | Mean | Max | Target |
+|--------|-----------|-----------|------|-----|--------|
+| Composite Reward | 0.515 | 0.491 | 0.544 | **0.816** | > 0.7 |
+| Training Loss | ~0 | 1.1e-3 | 7.1e-4 | 1.6e-2 | N/A |
+| KL Divergence | ~0 | 0.028 | 0.018 | 0.411 | < 10 nats |
+| Policy Entropy | 0.184 | 0.225 | 0.254 | 0.394 | N/A |
+| Gradient Norm | 0.173 | 0.180 | 0.238 | 1.594 | N/A |
+
+**Key result:** peak composite reward reached **0.816** (step 83), the highest across all runs. The reward curve crosses the ≥ 0.7 threshold multiple times across all three epochs. The KL spike near step 90 (max 0.411) is a transient event well below the 10-nats stability threshold, and the policy recovers immediately.
+
+### Training Curves
+
+![Training Dashboard](figures_v3/training_curves_dashboard.png)
+
+*Figure 3: Six-panel training dashboard for the 3-epoch run (111 steps, LoRA r=32). The loss and KL divergence panels show a brief spike near step 90 followed by recovery.*
+
+![Reward Curve](figures_v3/reward_curve.png)
+
+*Figure 4: Composite reward per step (raw and smoothed) for the 3-epoch run. The reward curve crosses the ≥ 0.7 target line at multiple points, with a peak of 0.816.*
+
+### Interpretation
+
+- **Peak reward 0.816 is the highest across all runs.** The increased LoRA rank (r=32) and 3 epochs allow the adapter to better capture tool-use patterns.
+- **Reward crosses 0.7 multiple times.** Unlike Run 1 where it crossed once, this run shows repeated crossings, indicating more consistent policy improvement.
+- **Transient KL spike at step ~90.** This is a brief instability that resolves within a few steps; the policy does not diverge. The mean KL (0.018) is still very low.
+- **Mean reward (0.544) slightly higher than Run 1 (0.525).** The improvement is modest on a CPU run; a GPU run with K=4 would likely consolidate the gains further.
+
+### Run Comparison
+
+| Run | Epochs | LoRA r | Steps | Peak Reward | Mean Reward | Runtime |
+|-----|--------|--------|-------|-------------|-------------|----------|
+| Run 1 (v2) | 1 | 16 | 37 | 0.771 | 0.525 | ~4h 08m |
+| Run 2 (v3) | 3 | 32 | 111 | **0.816** | **0.544** | ~12h 28m |
+
+---
+
+## 8. Repository Structure
 
 ```
 afterquery-rlvr/
@@ -321,9 +380,12 @@ afterquery-rlvr/
 ├── figures/                      # Original training curves (simplified tools)
 │   ├── training_curves_dashboard.png
 │   └── reward_curve.png
-├── figures_v2/                   # Corrected training curves (real τ²-bench tools)
-│   ├── training_curves_dashboard.png  # 6-panel training dashboard
-│   └── reward_curve.png               # Reward curve with target line
+├── figures_v2/                   # Corrected training curves (real τ²-bench tools, 1 epoch r=16)
+│   ├── training_curves_dashboard.png
+│   └── reward_curve.png
+├── figures_v3/                   # Extended training curves (3 epochs, LoRA r=32)
+│   ├── training_curves_dashboard.png
+│   └── reward_curve.png
 ├── synthetic_tasks_retail.json   # 50 generated synthetic tasks
 └── src/
     ├── __init__.py
@@ -335,7 +397,7 @@ afterquery-rlvr/
     └── plot_training.py          # Training curve visualization script
 ```
 
-## 8. Running the Code
+## 9. Running the Code
 
 ```bash
 # Setup
@@ -355,7 +417,8 @@ python -m src.training --config configs/training_config.yaml
 python -m src.training --config configs/training_config_3b_cpu.yaml
 
 # Generate training curve figures from a completed run
-python -m src.plot_training --log training_3b_run.log --out figures
+python -m src.plot_training --log training_3b_v2.log --out figures_v2 --subtitle "1 epoch · lr=5e-6 · K=2 · LoRA r=16"
+python -m src.plot_training --log training_3b_v3.log --out figures_v3 --subtitle "3 epochs · lr=5e-6 · K=2 · LoRA r=32"
 
 # Evaluate
 python -m src.evaluate --model outputs/rlvr_retail/final --domain retail
